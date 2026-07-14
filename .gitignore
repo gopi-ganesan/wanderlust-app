@@ -1,0 +1,33 @@
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+*.log
+.env
+.cache/
+
+# Terraform
+**/.terraform/*
+**/.terraform-validate/*
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Terraform plans
+*.tfplan
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+**/.terraform/
+**/.terraform-validate/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl

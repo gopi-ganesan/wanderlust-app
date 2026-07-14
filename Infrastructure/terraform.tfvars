@@ -1,0 +1,36 @@
+vpc_name = "eks-vpc"
+
+cidr_block = "10.0.0.0/16"
+
+availability_zones = ["us-east-1a", "us-east-1b"]
+
+private_subnet = ["10.0.1.0/24", "10.0.2.0/24"]
+
+public_subnet = ["10.0.5.0/24", "10.0.6.0/24"]
+
+cluster_name = "eks-cluster"
+
+aws_region = "us-east-1"
+
+repositories = [
+    "frontend-repo",
+    "backend-repo",
+]
+
+
+instance_types = ["t3.medium"]
+
+desired_size = 2
+
+min_size = 1
+
+max_size = 3
+
+disk_size = 20
+
+capacity_type = "ON_DEMAND"
+
+node_group_name = "worker-nodes"
+
+
+

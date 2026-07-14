@@ -1,0 +1,136 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(
+            name: 'environment',
+            defaultValue: 'dev',
+            description: 'Environment to deploy'
+        )
+        choice(
+            name: 'terraform_action',
+            choices: ['plan', 'apply', 'destroy'],
+            description: 'Terraform action'
+        )
+    }
+
+    environment {
+        TERRAFORM_DIR = 'devops-project-o2/Infrastructure'
+        AWS_REGION    = 'us-east-1'
+    }
+
+    stages {
+
+        stage('Preparing') {
+            steps {
+                sh 'echo preparing'
+            }
+        }
+
+        stage('Git Checkout') {
+            steps {
+                git(
+                    url: 'https://github.com/gopi-ganesan/starbucks-app.git',
+                    branch: 'main',
+                    credentialsId: 'github-creds'
+                )
+            }
+        }
+
+        stage('Debug Workspace') {
+            steps {
+                sh '''
+                    echo "Workspace: $(pwd)"
+                    ls -la devops-project-o2/Infrastructure
+                    find . -name "*.tf" 2>/dev/null
+                '''
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                withCredentials([[         
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh '''
+                        export AWS_DEFAULT_REGION=${AWS_REGION}
+                        export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                        export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                        terraform -chdir=${TERRAFORM_DIR} init
+                    '''
+                }
+            }
+        }
+
+        stage('Terraform Validate') {
+            steps {
+                withCredentials([[           
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh '''
+                        export AWS_DEFAULT_REGION=${AWS_REGION}
+                        export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                        export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                        terraform -chdir=${TERRAFORM_DIR} validate
+                    '''
+                }
+            }
+        }
+
+        stage('Terraform Action') {
+            steps {
+                withCredentials([[           
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'aws-credentials',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    script {
+                        def tfCmd = "terraform -chdir=${TERRAFORM_DIR}"
+                        def tfVar = "-var='environment=${params.environment}'"
+
+                        if (params.terraform_action == 'plan') {
+                            sh """
+                                export AWS_DEFAULT_REGION=${AWS_REGION}
+                                export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                                export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                                ${tfCmd} plan ${tfVar} -out=tfplan
+                            """
+                        }
+                        else if (params.terraform_action == 'apply') {
+                            sh """
+                                export AWS_DEFAULT_REGION=${AWS_REGION}
+                                export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                                export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                                ${tfCmd} apply ${tfVar} -auto-approve
+                            """
+                        }
+                        else if (params.terraform_action == 'destroy') {
+                            sh """
+                                export AWS_DEFAULT_REGION=${AWS_REGION}
+                                export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+                                export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+                                ${tfCmd} destroy ${tfVar} -auto-approve
+                            """
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully! '
+        }
+        failure {
+            echo 'Pipeline failed! '
+        }
+    }
+}
