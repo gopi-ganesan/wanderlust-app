@@ -137,19 +137,19 @@ pipeline {
                     passwordVariable: 'GITHUB_PASSWORD'
                     )]) {
                     sh """
-                        # git clone \
-                        #https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/gopi-ganesan/argocd-starbucks.git \
-                        # argocd-starbucks
-                        cd argocd-starbucks
+                        git clone \
+                        https://$GITHUB_USERNAME:$GITHUB_PASSWORD@github.com/gopi-ganesan/helm-argocd \
+                        helm-argocd
+                        cd helm-argocd
                         git remote set-url origin \
-                        https://\$GITHUB_USERNAME:\$GITHUB_PASSWORD@github.com/gopi-ganesan/argocd-starbucks.git
+                        https://\$GITHUB_USERNAME:\$GITHUB_PASSWORD@github.com/gopi-ganesan/helm-argocd.git
                         git fetch origin
                         git reset --hard origin/main
-                        sed -i "s|tag:.*|tag: ${IMAGE_TAG}|g" Helm/my-chart/values.yaml
-                        grep "tag:" Helm/my-chart/values.yaml
+                        sed -i "s|tag:.*|tag: ${IMAGE_TAG}|g" Helm/new-chart/values.yaml
+                        grep "tag:" Helm/new-chart/values.yaml
                         git config user.name "\$GITHUB_USERNAME"
                         git config user.email "devops@example.com"
-                        git add Helm/my-chart/values.yaml
+                        git add Helm/new-chart/values.yaml
                         git commit -m "ci: update image tag to ${IMAGE_TAG} [skip ci]" || \
                         echo "Nothing to commit"
                         git pull --rebase origin main
