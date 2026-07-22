@@ -29,12 +29,11 @@ pipeline {
 
                     withSonarQubeEnv('sonarqube') {
                         withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-
                             sh """
                             ${scannerHome}/bin/sonar-scanner \
-                            -Dsonar.projectKey=devops-project-o2 \
+                            -Dsonar.projectKey=wanderlus \
                             -Dsonar.sources=. \
-                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.host.url=http://localhost:90 \
                             -Dsonar.login=${SONAR_TOKEN}
                             """
                         }
@@ -121,10 +120,10 @@ pipeline {
         stage('Push Images to ECR') {
             steps {
                 sh """
-                docker tag  book-app${ECR_REPOSITORY}/${BACKEND_REPO}:${IMAGE_TAG}
+                docker tag  wanderlust-backend:${IMAGE_TAG} ${ECR_REPOSITORY}/${BACKEND_REPO}:${IMAGE_TAG}
                 docker push ${ECR_REPOSITORY}/${BACKEND_REPO}:${IMAGE_TAG}
 
-                docker tag  book-app${ECR_REPOSITORY}/${FRONTEND_REPO}:${IMAGE_TAG}
+                docker tag  wanderlust-frontend:${IMAGE_TAG} ${ECR_REPOSITORY}/${FRONTEND_REPO}:${IMAGE_TAG}
                 docker push ${ECR_REPOSITORY}/${FRONTEND_REPO}:${IMAGE_TAG}
                 """
             }
