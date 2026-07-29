@@ -162,9 +162,9 @@ pipeline {
     }
 
     post {
-        always {
-            cleanWs()
-        }
+        //always {
+           // cleanWs()
+       // }
 
         success {
             echo "Pipeline completed successfully."
