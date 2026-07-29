@@ -52,9 +52,13 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                dir('devops-project-o2') {
+                dir('frontend') {
                     sh '''
                         docker build -t wanderlust-frontend:v1 .
+                    '''
+                }
+                dir('backend') {
+                    sh '''
                         docker build -t wanderlust-backend:v1 .
                     '''
                 }
