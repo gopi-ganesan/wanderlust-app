@@ -10,6 +10,7 @@ pipeline {
         BACKEND_REPO    = 'wanderlust-backend'
 
         IMAGE_TAG       = 'v1'
+        
     }
 
     stages {
@@ -32,7 +33,7 @@ pipeline {
                                 ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=wenderlus \
                                 -Dsonar.sources=. \
-                                -Dsonar.host.url=http://54.224.147.99:9000 \
+                                -Dsonar.host.url=http://50.19.76.89:9000 \
                                 -Dsonar.login=${SONAR_TOKEN}
                             """
                         }
