@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         AWS_REGION      = 'us-east-1'
-        AWS_ACCOUNT_ID  = '562404438689'
+        AWS_ACCOUNT_ID  = '940521993730'
         ECR_REPOSITORY  = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
 
         FRONTEND_REPO   = 'wanderlust-frontend'
