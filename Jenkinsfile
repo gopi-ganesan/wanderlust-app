@@ -18,7 +18,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/gopi-ganesan/wanderlust-app.git',
-                    credentialsId: 'github-credentials'
+                    credentialsId: 'github-creds'
             }
         }
 
