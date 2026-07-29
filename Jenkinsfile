@@ -54,8 +54,8 @@ pipeline {
             steps {
                 dir('devops-project-o2') {
                     sh '''
-                        sudo docker build -t wanderlust-frontend:v1 ./frontend
-                        sudo docker build -t wanderlust-backend:v1 ./backend
+                        docker build -t wanderlust-frontend:v1 ./frontend
+                        docker build -t wanderlust-backend:v1 ./backend
                     '''
                 }
             }
