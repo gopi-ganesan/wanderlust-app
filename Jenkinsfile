@@ -26,7 +26,6 @@ pipeline {
             steps {
                 script {
                     def scannerHome = tool 'sonarqube'
-
                     withSonarQubeEnv('sonarqube') {
                         withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                             sh """
