@@ -31,9 +31,9 @@ pipeline {
                         withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                             sh """
                                 ${scannerHome}/bin/sonar-scanner \
-                                -Dsonar.projectKey=wanderlust \
+                                -Dsonar.projectKey=wenderlus \
                                 -Dsonar.sources=. \
-                                -Dsonar.host.url=http://localhost:90 \
+                                -Dsonar.host.url=http://54.224.147.99:9000 \
                                 -Dsonar.login=${SONAR_TOKEN}
                             """
                         }
