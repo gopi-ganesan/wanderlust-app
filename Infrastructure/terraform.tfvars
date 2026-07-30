@@ -18,11 +18,11 @@ repositories = [
 ]
 
 
-instance_types = ["t3.medium"]
+instance_types = ["m7i-flex.large"]
 
 desired_size = 2
 
-min_size = 1
+min_size = 3
 
 max_size = 3
 
