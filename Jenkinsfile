@@ -9,7 +9,7 @@ pipeline {
         FRONTEND_REPO   = 'wanderlust-frontend'
         BACKEND_REPO    = 'wanderlust-backend'
 
-        IMAGE_TAG       = 'v2'
+        IMAGE_TAG       = 'v1'
         
     }
 
