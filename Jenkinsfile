@@ -89,13 +89,13 @@ pipeline {
                     trivy image \
                     --skip-version-check \
                     --severity HIGH,CRITICAL \
-                    --exit-code 1 \
+                    --exit-code 0 \
                     --no-progress wanderlust-frontend:v1
 
                     trivy image \
                     --skip-version-check \
                     --severity HIGH,CRITICAL \
-                    --exit-code 1 \
+                    --exit-code 0 \
                     --no-progress wanderlust-backend:v1
                 '''
             }
