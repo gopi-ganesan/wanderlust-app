@@ -68,12 +68,16 @@ pipeline {
         stage('Trivy Scan') {
             steps {
                 sh '''
-                    trivy image --severity HIGH,CRITICAL \
+                    trivy image \
+                    --skip-version-check \
+                    --severity HIGH,CRITICAL \
                     --format table \
                     --output frontend-trivy-report.txt \
                     --no-progress wanderlust-frontend:v1
 
-                    trivy image --severity HIGH,CRITICAL \
+                    trivy image \
+                    --skip-version-check \
+                    --severity HIGH,CRITICAL \
                     --format table \
                     --output backend-trivy-report.txt \
                     --no-progress wanderlust-backend:v1
@@ -82,11 +86,15 @@ pipeline {
                 archiveArtifacts artifacts: '*trivy-report.txt'
 
                 sh '''
-                    trivy image --severity HIGH,CRITICAL \
+                    trivy image \
+                    --skip-version-check \
+                    --severity HIGH,CRITICAL \
                     --exit-code 1 \
                     --no-progress wanderlust-frontend:v1
 
-                    trivy image --severity HIGH,CRITICAL \
+                    trivy image \
+                    --skip-version-check \
+                    --severity HIGH,CRITICAL \
                     --exit-code 1 \
                     --no-progress wanderlust-backend:v1
                 '''
