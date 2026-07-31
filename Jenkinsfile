@@ -33,7 +33,7 @@ pipeline {
                                 ${scannerHome}/bin/sonar-scanner \
                                 -Dsonar.projectKey=wenderlus \
                                 -Dsonar.sources=. \
-                                -Dsonar.host.url=http://54.164.80.23:9000 \
+                                -Dsonar.host.url=http://34.207.139.16:9000 \
                                 -Dsonar.login=${SONAR_TOKEN}
                             """
                         }
