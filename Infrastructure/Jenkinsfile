@@ -3,36 +3,26 @@ pipeline {
 
     parameters {
         choice(
-            name: 'MODULE',
-            choices: ['ecr', 'vpc', 'eks'],
-            description: 'Select Terraform module'
-        )
-
-        string(
-            name: 'wenderlust',
-            defaultValue: 'dev',
-            description: 'Environment'
-        )
-
-        choice(
             name: 'terraform_action',
             choices: ['plan', 'apply', 'destroy'],
-            description: 'Terraform Action'
+            description: 'Select Terraform Action'
+        )
+        string(
+            name: 'environment',
+            defaultValue: 'dev',
+            description: 'Environment (dev, qa, prod)'
         )
     }
-
     environment {
         AWS_REGION = 'us-east-1'
+        TERRAFORM_DIR = 'Infrastructure'
     }
-
     stages {
-
         stage('Preparing') {
             steps {
                 echo "Preparing..."
             }
         }
-
         stage('Git Checkout') {
             steps {
                 git(
@@ -42,31 +32,20 @@ pipeline {
                 )
             }
         }
-
-        stage('Set Terraform Directory') {
-            steps {
-                script {
-                    env.TERRAFORM_DIR = "devops-project-o2/Infrastructure/${params.MODULE}"
-                    echo "Terraform Directory: ${env.TERRAFORM_DIR}"
-                }
-            }
-        }
-
         stage('Debug Workspace') {
             steps {
                 sh '''
                     echo "Current Directory:"
                     pwd
-
+                    echo "Workspace Contents:"
+                    ls -la
                     echo "Terraform Directory:"
                     ls -la ${TERRAFORM_DIR}
-
                     echo "Terraform Files:"
                     find ${TERRAFORM_DIR} -name "*.tf"
                 '''
             }
         }
-
         stage('Terraform Init') {
             steps {
                 withCredentials([[
@@ -77,13 +56,11 @@ pipeline {
                 ]]) {
                     sh '''
                         export AWS_DEFAULT_REGION=${AWS_REGION}
-
                         terraform -chdir=${TERRAFORM_DIR} init
                     '''
                 }
             }
         }
-
         stage('Terraform Validate') {
             steps {
                 withCredentials([[
@@ -94,14 +71,12 @@ pipeline {
                 ]]) {
                     sh '''
                         export AWS_DEFAULT_REGION=${AWS_REGION}
-
                         terraform -chdir=${TERRAFORM_DIR} validate
                     '''
                 }
             }
         }
-
-        stage('Terraform Action') {
+        stage('Terraform Plan / Apply / Destroy') {
             steps {
                 withCredentials([[
                     $class: 'AmazonWebServicesCredentialsBinding',
@@ -109,62 +84,43 @@ pipeline {
                     accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                     secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                 ]]) {
-
                     script {
-
                         if (params.terraform_action == 'plan') {
-
                             sh """
                                 export AWS_DEFAULT_REGION=${AWS_REGION}
-
                                 terraform -chdir=${TERRAFORM_DIR} plan \
                                 -var="environment=${params.environment}" \
                                 -out=tfplan
                             """
-                        }
-
-                        else if (params.terraform_action == 'apply') {
-
+                        } else if (params.terraform_action == 'apply') {
                             sh """
                                 export AWS_DEFAULT_REGION=${AWS_REGION}
-
                                 terraform -chdir=${TERRAFORM_DIR} apply \
                                 -var="environment=${params.environment}" \
                                 -auto-approve
                             """
-                        }
-
-                        else if (params.terraform_action == 'destroy') {
-
+                        } else if (params.terraform_action == 'destroy') {
                             sh """
                                 export AWS_DEFAULT_REGION=${AWS_REGION}
-
                                 terraform -chdir=${TERRAFORM_DIR} destroy \
                                 -var="environment=${params.environment}" \
                                 -auto-approve
                             """
                         }
-
                     }
-
                 }
             }
         }
-
     }
-
     post {
-
         success {
-            echo "Terraform ${params.terraform_action} completed successfully for ${params.MODULE}"
+            echo "Terraform ${params.terraform_action} completed successfully."
         }
-
         failure {
             echo "Terraform pipeline failed."
         }
-
-        //always {
-            //cleanWs()
-        //}
+        always {
+            cleanWs()
+        }
     }
 }
