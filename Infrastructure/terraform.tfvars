@@ -13,8 +13,8 @@ cluster_name = "eks-cluster"
 aws_region = "us-east-1"
 
 repositories = [
-    "frontend-repo",
-    "backend-repo",
+    "wanderlust-frontend",
+    "wanderlust-backend",
 ]
 
 
