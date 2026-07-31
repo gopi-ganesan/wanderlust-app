@@ -22,9 +22,9 @@ instance_types = ["m7i-flex.large"]
 
 desired_size = 2
 
-min_size = 3
+min_size = 2
 
-max_size = 3
+max_size = 2
 
 disk_size = 20
 
