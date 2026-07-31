@@ -125,4 +125,10 @@ variable "capacity_type" {
 }
 
 
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+  default     = "dev"
+}
+
 
