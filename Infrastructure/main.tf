@@ -82,7 +82,7 @@ module "argocd" {
 
 terraform {
   backend "s3" {
-    bucket = "my-terraform-state-bucket-gopit"
+    bucket = "my-terraform-state-bucket-gopit-1"
     key    = "eks/terraform.tfstate"
     region = "us-east-1"
     #dynamodb_table = "terraform-lock" # Uncomment this line if you have a DynamoDB table for state locking
