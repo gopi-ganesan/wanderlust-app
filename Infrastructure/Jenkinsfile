@@ -119,8 +119,8 @@ pipeline {
         failure {
             echo "Terraform pipeline failed."
         }
-        //always {
-            //cleanWs()
-        //}
+        always {
+            cleanWs()
+        }
     }
 }
