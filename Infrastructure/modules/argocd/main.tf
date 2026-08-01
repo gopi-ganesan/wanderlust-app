@@ -4,7 +4,7 @@ resource "kubernetes_namespace_v1" "argocd" {
   }
 }
 
-resource "kubernetes_namespace_v1" "monitoring" {
+resource "kubernetes_namespace_v2" "prometheus" {
   metadata {
     name = var.kubernetes_namespace
   }
@@ -23,7 +23,7 @@ terraform {
 
 resource "helm_release" "argocd" {
   name       = "argocd"
-  namespace  = var.kubernetes_namespace
+  namespace  = kubernetes_namespace_v1.argocd.metadata[0].name
   repository = "https://argoproj.github.io/argo-helm"
   chart      = "argo-cd"
   version    = "6.7.0"
@@ -46,9 +46,9 @@ resource "helm_release" "argocd" {
   ]
 }
 
-resource "helm_release" "monitoring" {
+resource "helm_release" "prometheus" {
   name       = "kube-prometheus-stack"
-  namespace  = kubernetes_namespace_v1.monitoring.metadata[0].name
+  namespace  = kubernetes_namespace_v2.prometheus.metadata[0].name
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
@@ -80,6 +80,6 @@ resource "helm_release" "monitoring" {
   ]
 
   depends_on = [
-    kubernetes_namespace_v1.monitoring
+    kubernetes_namespace_v2.prometheus
   ]
 }

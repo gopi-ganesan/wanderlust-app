@@ -1,7 +1,7 @@
 variable "kubernetes_namespace" {
   description = "The Kubernetes namespace where ArgoCD will be deployed."
   type        = string
-  default     = "monitoring"
+  default     = "prometheus"
 
 }
 

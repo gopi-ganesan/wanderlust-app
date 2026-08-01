@@ -56,7 +56,7 @@ resource "aws_iam_openid_connect_provider" "eks" {
 
 resource "aws_eks_node_group" "worker_nodes" {
   cluster_name    = aws_eks_cluster.eks-cl.name
-  node_group_name = "worker-nodes"
+  node_group_name = "${var.node_group_name}"
   node_role_arn   = aws_iam_role.eks_node_group_role.arn
   subnet_ids =  var.subnet_ids
   instance_types = var.instance_types
