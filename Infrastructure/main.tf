@@ -13,13 +13,14 @@ module "vpc" {
     "kubernetes.io/role/elb"                    = "1"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
+
   private_subnet_tags = {
     "kubernetes.io/role/internal-elb"           = "1"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
 
   tags = merge(var.tags, {
-    "Project" = "DevOps-Project"
+    Project = "DevOps-Project"
   })
 }
 
@@ -29,28 +30,45 @@ module "eks" {
   cluster_name    = var.cluster_name
   node_group_name = var.node_group_name
 
-  instance_types = var.instance_types
-  max_size       = var.max_size
-  min_size       = var.min_size
-  disk_size      = var.disk_size
-  # Required by the module: specify capacity and desired size
-  capacity_type = var.capacity_type
-  desired_size  = var.desired_size
-
   subnet_ids = module.vpc.private_subnet_ids
-  depends_on = [module.vpc]
-}
 
+  instance_types = var.instance_types
+  capacity_type  = var.capacity_type
+
+  desired_size = var.desired_size
+  min_size     = var.min_size
+  max_size     = var.max_size
+
+  disk_size = var.disk_size
+
+  depends_on = [
+    module.vpc
+  ]
+}
 
 module "ecr" {
   source       = "./modules/ecr"
   repositories = var.repositories
+}
 
+
+data "aws_eks_cluster" "eks" {
+  name = module.eks.cluster_name
+
+  depends_on = [
+    module.eks
+  ]
 }
 
 data "aws_eks_cluster_auth" "eks" {
-  name = var.cluster_name
+  name = module.eks.cluster_name
+
+  depends_on = [
+    module.eks
+  ]
 }
+
+
 
 provider "kubernetes" {
   alias                  = "eks"
@@ -77,15 +95,17 @@ module "argocd" {
     helm       = helm.eks
   }
 
-  depends_on = [module.eks]
+  depends_on = [
+    module.eks
+  ]
 }
+
 
 terraform {
   backend "s3" {
-    bucket = "my-terraform-state-bucket-gopit-1"
-    key    = "eks/terraform.tfstate"
-    region = "us-east-1"
-    #dynamodb_table = "terraform-lock" # Uncomment this line if you have a DynamoDB table for state locking
+    bucket  = "my-terraform-state-bucket-gopit-1"
+    key     = "eks/terraform.tfstate"
+    region  = "us-east-1"
     encrypt = true
   }
 }
