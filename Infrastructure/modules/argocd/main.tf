@@ -4,7 +4,7 @@ resource "kubernetes_namespace_v1" "argocd" {
   }
 }
 
-resource "kubernetes_namespace_v2" "prometheus" {
+resource "kubernetes_namespace_v1" "prometheus" {
   metadata {
     name = var.kubernetes_namespace
   }
