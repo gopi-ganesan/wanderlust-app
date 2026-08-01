@@ -73,6 +73,7 @@ module "argocd" {
   source = "./modules/argocd"
 
   providers = {
+    count  = var.deploy_k8s_apps ? 1 : 0
     kubernetes = kubernetes.eks
     helm       = helm.eks
   }
