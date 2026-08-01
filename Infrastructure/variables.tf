@@ -130,9 +130,3 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
-
-variable "deploy_k8s_apps" {
-  description = "Deploy ArgoCD and Prometheus"
-  type        = bool
-  default     = false
-}
