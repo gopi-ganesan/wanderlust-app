@@ -48,7 +48,7 @@ resource "helm_release" "argocd" {
 
 resource "helm_release" "prometheus" {
   name       = "kube-prometheus-stack"
-  namespace  = kubernetes_namespace_v2.prometheus.metadata[0].name
+  namespace  = kubernetes_namespace_v1.prometheus.metadata[0].name
 
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
@@ -80,6 +80,6 @@ resource "helm_release" "prometheus" {
   ]
 
   depends_on = [
-    kubernetes_namespace_v2.prometheus
+    kubernetes_namespace_v1.prometheus
   ]
 }
